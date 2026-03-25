@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <!-- ============================================================
+    CobreJá - Sistema Web para Gerenciamento de Cobranças
+    e Contas a Receber com Redirecionamento ao WhatsApp Web
+    
+    Projeto Integrador 1 - Univesp - Polo Jaú
+    Empresa parceira: JPisa - Distribuidora de Secos e Molhados
+    
+    ARQUIVO: index.html (Tela de Login)
+    DESCRIÇÃO: Página inicial do sistema. O usuário informa
+    suas credenciais para acessar o painel.
+    
+    INTEGRAÇÃO COM BACKEND:
+    - O formulário envia os campos "usuario" e "senha"
+    - Em produção, o backend deve validar as credenciais
+      no banco de dados e redirecionar ao dashboard.html
+    ============================================================ -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CobreJá — Login</title>
+
+    <!-- Google Fonts: DM Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- CSS Principal -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- ============================================================
+    TELA DE LOGIN
+    Layout centralizado com card sobre fundo gradiente.
+    Em produção, o action do form deve apontar para a rota
+    de autenticação do backend (ex: /api/auth/login).
+    ============================================================ -->
+    <div class="login">
+
+        <div class="login__card">
+            
+            <!-- Logo do sistema (imagem real) -->
+            <div class="login__logo">
+                <img src="logo.webp" alt="CobreJá - Sistema Web de Cobrança" class="login__logo-img">
+                <p class="login__subtitulo">Faça login para acessar o sistema</p>
+            </div>
+
+            <!-- 
+                FORMULÁRIO DE LOGIN
+                method="POST" → envia dados de forma segura
+                action="#" → SUBSTITUIR pela rota do backend (ex: /api/auth/login)
+            -->
+            <form class="login__form" method="POST" action="#">
+
+                <!-- Campo: Usuário -->
+                <div class="campo">
+                    <label class="campo__label" for="usuario">Usuário</label>
+                    <div class="campo__wrapper">
+                        <!-- Ícone de pessoa -->
+                        <svg class="campo__icone" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                        <input 
+                            type="text" 
+                            id="usuario" 
+                            name="usuario" 
+                            class="form-input campo__input--com-icone" 
+                            placeholder="Digite seu usuário"
+                            required
+                            autocomplete="username"
+                        >
+                    </div>
+                </div>
+
+                <!-- Campo: Senha -->
+                <div class="campo">
+                    <label class="campo__label" for="senha">Senha</label>
+                    <div class="campo__wrapper">
+                        <!-- Ícone de cadeado -->
+                        <svg class="campo__icone" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                        </svg>
+                        <input 
+                            type="password" 
+                            id="senha" 
+                            name="senha" 
+                            class="form-input campo__input--com-icone" 
+                            placeholder="Digite sua senha"
+                            required
+                            autocomplete="current-password"
+                        >
+                    </div>
+                </div>
+
+                <!-- 
+                    Botão de entrar
+                    Em produção, o form faz submit para o backend.
+                    No protótipo, redirecionamos direto via JS.
+                -->
+                <button type="button" class="login__btn" onclick="window.location.href='dashboard.html'">
+                    Entrar no Sistema
+                </button>
+
+                <!-- Link de recuperação (ilustrativo) -->
+                <p class="login__esqueci">
+                    Esqueceu a senha? <a href="#">Recuperar acesso</a>
+                </p>
+
+            </form>
+
+            <!-- Rodapé do card -->
+            <div class="login__rodape">
+                <p>CobreJá © 2026 — Projeto Integrador Univesp</p>
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+</html>
