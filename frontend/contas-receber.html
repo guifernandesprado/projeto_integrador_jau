@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <!-- ============================================================
+    CobreJá - ARQUIVO: contas-receber.html
+    DESCRIÇÃO: Lista completa de todos os débitos registrados,
+    com filtros por status (todos, pendente, vencido, pago),
+    botão de cobrança via WhatsApp Web e opção de marcar
+    débitos como pagos.
+    
+    INTEGRAÇÃO COM BACKEND:
+    - GET /api/debitos → lista todos os débitos
+    - GET /api/debitos?status=pendente → filtra por status
+    - PUT /api/debitos/{id} → atualiza status para "pago"
+    - Os links do WhatsApp são montados com os dados do cliente
+      e do débito retornados pelo backend.
+    ============================================================ -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CobreJá — Contas a Receber</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="app-container">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar__logo">
+                <div class="sidebar__logo-icone">
+                    <img src="icone.webp" alt="CobreJá">
+                </div>
+                <div>
+                    <h2 class="sidebar__titulo">CobreJá</h2>
+                    <p class="sidebar__subtitulo">Gestão de Cobranças</p>
+                </div>
+            </div>
+            <div class="sidebar__divisor"></div>
+            <nav class="sidebar__nav">
+                <a href="dashboard.html" class="sidebar__nav-item">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                    <span>Dashboard</span>
+                </a>
+                <a href="clientes.html" class="sidebar__nav-item">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    <span>Clientes</span>
+                </a>
+                <a href="cadastro-cliente.html" class="sidebar__nav-item">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+                    <span>Novo Cliente</span>
+                </a>
+                <a href="registro-debito.html" class="sidebar__nav-item">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+                    <span>Novo Débito</span>
+                </a>
+                <a href="contas-receber.html" class="sidebar__nav-item sidebar__nav-item--ativo">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                    <span>Contas a Receber</span>
+                </a>
+            </nav>
+            <div class="sidebar__espacador"></div>
+            <div class="sidebar__divisor"></div>
+            <a href="index.html" class="sidebar__sair">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                <span>Sair do Sistema</span>
+            </a>
+        </aside>
+
+        <div class="overlay" id="overlay" onclick="fecharMenu()"></div>
+
+        <!-- CONTEÚDO PRINCIPAL -->
+        <main class="conteudo-principal">
+
+            <header class="header">
+                <button class="header__menu-btn" onclick="toggleMenu()" aria-label="Abrir menu">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                </button>
+                <div class="header__info">
+                    <p class="header__bemvindo">Bem-vindo(a) de volta</p>
+                    <h3 class="header__nome">JPisa Distribuidora</h3>
+                </div>
+                <div class="header__avatar">JP</div>
+            </header>
+
+            <div class="conteudo-area">
+
+                <!-- Título + Botão novo débito -->
+                <div class="pagina-titulo-area--com-acao">
+                    <div>
+                        <h1 class="titulo-pagina">Contas a Receber</h1>
+                        <p class="descricao-pagina">Controle todas as cobranças e débitos dos clientes</p>
+                    </div>
+                    <a href="registro-debito.html" class="btn-primario">+ Novo Débito</a>
+                </div>
+
+                <!-- 
+                    FILTROS POR STATUS
+                    BACKEND: Ao clicar em cada filtro, buscar débitos
+                    com o status correspondente:
+                    GET /api/debitos?status=pendente
+                    GET /api/debitos?status=vencido
+                    GET /api/debitos?status=pago
+                -->
+                <div class="filtros">
+                    <span class="filtros__label">Filtrar:</span>
+                    <button class="filtro-btn filtro-btn--todos">Todos (8)</button>
+                    <button class="filtro-btn filtro-btn--pendente">Pendentes (4)</button>
+                    <button class="filtro-btn filtro-btn--vencido">Vencidos (2)</button>
+                    <button class="filtro-btn filtro-btn--pago">Pagos (2)</button>
+                </div>
+
+                <!-- 
+                    TABELA COMPLETA DE DÉBITOS
+                    BACKEND: Cada linha é gerada dinamicamente
+                    com dados do endpoint GET /api/debitos
+                -->
+                <div class="tabela-container">
+                    <table class="tabela">
+                        <thead>
+                            <tr>
+                                <th>Cliente</th>
+                                <th>Descrição</th>
+                                <th>Valor</th>
+                                <th>Criação</th>
+                                <th>Vencimento</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            <!-- Débito 1: Maria Silva - VENCIDO -->
+                            <tr>
+                                <td><strong>Maria Silva</strong></td>
+                                <td>Compra de arroz e feijão</td>
+                                <td class="tabela__valor tabela__valor--perigo">R$ 350,00</td>
+                                <td>01/03/2026</td>
+                                <td>15/03/2026</td>
+                                <td><span class="badge badge--vencido">Vencido</span></td>
+                                <td>
+                                    <div class="tabela__acoes">
+                                        <!-- BOTÃO COBRAR VIA WHATSAPP -->
+                                        <a href="https://wa.me/5500000000001?text=Ol%C3%A1%20Maria%20Silva!%20%F0%9F%98%8A%0A%0APassando%20para%20lembrar%20sobre%20o%20d%C3%A9bito%3A%0A%F0%9F%93%8B%20Compra%20de%20arroz%20e%20feij%C3%A3o%0A%F0%9F%92%B0%20Valor%3A%20R%24%20350%2C00%0A%F0%9F%93%85%20Vencimento%3A%2015%2F03%2F2026%0A%0APor%20favor%2C%20entre%20em%20contato%20para%20regulariza%C3%A7%C3%A3o.%0AObrigado!%20%E2%80%94%20JPisa%20Distribuidora" 
+                                           target="_blank" class="btn-whatsapp" rel="noopener noreferrer">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="#fff"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                                            Cobrar
+                                        </a>
+                                        <!-- BOTÃO MARCAR COMO PAGO -->
+                                        <button class="btn-pago" onclick="marcarPago(this)">✓ Pago</button>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <!-- Débito 2: João Oliveira - PENDENTE -->
+                            <tr>
+                                <td><strong>João Oliveira</strong></td>
+                                <td>Compra de óleo e açúcar</td>
+                                <td class="tabela__valor tabela__valor--normal">R$ 180,50</td>
+                                <td>05/03/2026</td>
+                                <td>25/03/2026</td>
+                                <td><span class="badge badge--pendente">Pendente</span></td>
+                                <td>
+                                    <div class="tabela__acoes">
+                                        <a href="https://wa.me/5500000000002?text=Ol%C3%A1%20Jo%C3%A3o%20Oliveira!%20%F0%9F%98%8A%0A%0APassando%20para%20lembrar%20sobre%20o%20d%C3%A9bito%3A%0A%F0%9F%93%8B%20Compra%20de%20%C3%B3leo%20e%20a%C3%A7%C3%BAcar%0A%F0%9F%92%B0%20Valor%3A%20R%24%20180%2C50%0A%F0%9F%93%85%20Vencimento%3A%2025%2F03%2F2026%0A%0APor%20favor%2C%20entre%20em%20contato%20para%20regulariza%C3%A7%C3%A3o.%0AObrigado!%20%E2%80%94%20JPisa%20Distribuidora" 
+                                           target="_blank" class="btn-whatsapp" rel="noopener noreferrer">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="#fff"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                                            Cobrar
+                                        </a>
+                                        <button class="btn-pago" onclick="marcarPago(this)">✓ Pago</button>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <!-- Débito 3: Ana Costa - VENCIDO -->
+                            <tr>
+                                <td><strong>Ana Costa</strong></td>
+                                <td>Compra de farinha e macarrão</td>
+                                <td class="tabela__valor tabela__valor--perigo">R$ 420,00</td>
+                                <td>28/02/2026</td>
+                                <td>10/03/2026</td>
+                                <td><span class="badge badge--vencido">Vencido</span></td>
+                                <td>
+                                    <div class="tabela__acoes">
+                                        <a href="https://wa.me/5500000000003?text=Ol%C3%A1%20Ana%20Costa!%20%F0%9F%98%8A%0A%0APassando%20para%20lembrar%20sobre%20o%20d%C3%A9bito%3A%0A%F0%9F%93%8B%20Compra%20de%20farinha%20e%20macarr%C3%A3o%0A%F0%9F%92%B0%20Valor%3A%20R%24%20420%2C00%0A%F0%9F%93%85%20Vencimento%3A%2010%2F03%2F2026%0A%0APor%20favor%2C%20entre%20em%20contato%20para%20regulariza%C3%A7%C3%A3o.%0AObrigado!%20%E2%80%94%20JPisa%20Distribuidora" 
+                                           target="_blank" class="btn-whatsapp" rel="noopener noreferrer">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="#fff"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                                            Cobrar
+                                        </a>
+                                        <button class="btn-pago" onclick="marcarPago(this)">✓ Pago</button>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <!-- Débito 4: Maria Silva - PENDENTE -->
+                            <tr>
+                                <td><strong>Maria Silva</strong></td>
+                                <td>Compra de café e leite</td>
+                                <td class="tabela__valor tabela__valor--normal">R$ 95,00</td>
+                                <td>15/03/2026</td>
+                                <td>01/04/2026</td>
+                                <td><span class="badge badge--pendente">Pendente</span></td>
+                                <td>
+                                    <div class="tabela__acoes">
+                                        <a href="https://wa.me/5500000000001?text=Ol%C3%A1%20Maria%20Silva!%20%F0%9F%98%8A%0A%0APassando%20para%20lembrar%20sobre%20o%20d%C3%A9bito%3A%0A%F0%9F%93%8B%20Compra%20de%20caf%C3%A9%20e%20leite%0A%F0%9F%92%B0%20Valor%3A%20R%24%2095%2C00%0A%F0%9F%93%85%20Vencimento%3A%2001%2F04%2F2026%0A%0APor%20favor%2C%20entre%20em%20contato%20para%20regulariza%C3%A7%C3%A3o.%0AObrigado!%20%E2%80%94%20JPisa%20Distribuidora" 
+                                           target="_blank" class="btn-whatsapp" rel="noopener noreferrer">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="#fff"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                                            Cobrar
+                                        </a>
+                                        <button class="btn-pago" onclick="marcarPago(this)">✓ Pago</button>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <!-- Débito 5: Carlos Santos - PAGO -->
+                            <tr>
+                                <td><strong>Carlos Santos</strong></td>
+                                <td>Compra de produtos diversos</td>
+                                <td class="tabela__valor tabela__valor--normal">R$ 1.200,00</td>
+                                <td>01/03/2026</td>
+                                <td>20/03/2026</td>
+                                <td><span class="badge badge--pago">Pago</span></td>
+                                <td>
+                                    <div class="tabela__acoes">
+                                        <span class="texto-quitado">✓ Quitado</span>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <!-- Débito 6: Fernanda Lima - PENDENTE -->
+                            <tr>
+                                <td><strong>Fernanda Lima</strong></td>
+                                <td>Compra de biscoitos e doces</td>
+                                <td class="tabela__valor tabela__valor--normal">R$ 275,00</td>
+                                <td>10/03/2026</td>
+                                <td>28/03/2026</td>
+                                <td><span class="badge badge--pendente">Pendente</span></td>
+                                <td>
+                                    <div class="tabela__acoes">
+                                        <a href="https://wa.me/5500000000005?text=Ol%C3%A1%20Fernanda%20Lima!%20%F0%9F%98%8A%0A%0APassando%20para%20lembrar%20sobre%20o%20d%C3%A9bito%3A%0A%F0%9F%93%8B%20Compra%20de%20biscoitos%20e%20doces%0A%F0%9F%92%B0%20Valor%3A%20R%24%20275%2C00%0A%F0%9F%93%85%20Vencimento%3A%2028%2F03%2F2026%0A%0APor%20favor%2C%20entre%20em%20contato%20para%20regulariza%C3%A7%C3%A3o.%0AObrigado!%20%E2%80%94%20JPisa%20Distribuidora" 
+                                           target="_blank" class="btn-whatsapp" rel="noopener noreferrer">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="#fff"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                                            Cobrar
+                                        </a>
+                                        <button class="btn-pago" onclick="marcarPago(this)">✓ Pago</button>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <!-- Débito 7: João Oliveira - PAGO -->
+                            <tr>
+                                <td><strong>João Oliveira</strong></td>
+                                <td>Compra de sal e temperos</td>
+                                <td class="tabela__valor tabela__valor--normal">R$ 150,00</td>
+                                <td>15/02/2026</td>
+                                <td>28/02/2026</td>
+                                <td><span class="badge badge--pago">Pago</span></td>
+                                <td>
+                                    <div class="tabela__acoes">
+                                        <span class="texto-quitado">✓ Quitado</span>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <!-- Débito 8: Ana Costa - PENDENTE -->
+                            <tr>
+                                <td><strong>Ana Costa</strong></td>
+                                <td>Compra de grãos</td>
+                                <td class="tabela__valor tabela__valor--normal">R$ 530,00</td>
+                                <td>20/03/2026</td>
+                                <td>05/04/2026</td>
+                                <td><span class="badge badge--pendente">Pendente</span></td>
+                                <td>
+                                    <div class="tabela__acoes">
+                                        <a href="https://wa.me/5500000000003?text=Ol%C3%A1%20Ana%20Costa!%20%F0%9F%98%8A%0A%0APassando%20para%20lembrar%20sobre%20o%20d%C3%A9bito%3A%0A%F0%9F%93%8B%20Compra%20de%20gr%C3%A3os%0A%F0%9F%92%B0%20Valor%3A%20R%24%20530%2C00%0A%F0%9F%93%85%20Vencimento%3A%2005%2F04%2F2026%0A%0APor%20favor%2C%20entre%20em%20contato%20para%20regulariza%C3%A7%C3%A3o.%0AObrigado!%20%E2%80%94%20JPisa%20Distribuidora" 
+                                           target="_blank" class="btn-whatsapp" rel="noopener noreferrer">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="#fff"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                                            Cobrar
+                                        </a>
+                                        <button class="btn-pago" onclick="marcarPago(this)">✓ Pago</button>
+                                    </div>
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- ============================================================
+                RESUMO FINANCEIRO
+                Exibe os totais por status no rodapé da página.
+                BACKEND: Os valores devem ser calculados pelo backend.
+                ============================================================ -->
+                <div class="resumo-financeiro">
+                    <div class="resumo-financeiro__item">
+                        <span class="resumo-financeiro__label">Total Pendente</span>
+                        <span class="resumo-financeiro__valor resumo-financeiro__valor--pendente">R$ 1.080,50</span>
+                    </div>
+                    <div class="resumo-financeiro__separador"></div>
+                    <div class="resumo-financeiro__item">
+                        <span class="resumo-financeiro__label">Total Vencido</span>
+                        <span class="resumo-financeiro__valor resumo-financeiro__valor--vencido">R$ 770,00</span>
+                    </div>
+                    <div class="resumo-financeiro__separador"></div>
+                    <div class="resumo-financeiro__item">
+                        <span class="resumo-financeiro__label">Total Recebido</span>
+                        <span class="resumo-financeiro__valor resumo-financeiro__valor--pago">R$ 1.350,00</span>
+                    </div>
+                    <div class="resumo-financeiro__separador"></div>
+                    <div class="resumo-financeiro__item">
+                        <span class="resumo-financeiro__label">Total Geral</span>
+                        <span class="resumo-financeiro__valor resumo-financeiro__valor--total">R$ 3.200,50</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <footer class="rodape">
+                <p>CobreJá © 2026 — Projeto Integrador 1 — Univesp — Polo Jaú</p>
+            </footer>
+
+        </main>
+    </div>
+
+    <script>
+        function toggleMenu() { document.getElementById('sidebar').classList.toggle('sidebar--aberta'); document.getElementById('overlay').classList.toggle('overlay--visivel'); }
+        function fecharMenu() { document.getElementById('sidebar').classList.remove('sidebar--aberta'); document.getElementById('overlay').classList.remove('overlay--visivel'); }
+
+        /**
+         * Marca um débito como pago (protótipo visual).
+         * BACKEND: Substituir por chamada PUT /api/debitos/{id}
+         * enviando { status: "pago" } para atualizar no banco.
+         * 
+         * @param {HTMLElement} botao - O botão clicado
+         */
+        function marcarPago(botao) {
+            // Encontra a linha da tabela (tr) onde o botão está
+            var linha = botao.closest('tr');
+            
+            // Atualiza o badge de status para "Pago"
+            var badge = linha.querySelector('.badge');
+            badge.className = 'badge badge--pago';
+            badge.textContent = 'Pago';
+
+            // Substitui os botões de ação pelo texto "Quitado"
+            var acoes = linha.querySelector('.tabela__acoes');
+            acoes.innerHTML = '<span class="texto-quitado">✓ Quitado</span>';
+
+            // Feedback visual
+            alert('Débito marcado como pago!');
+        }
+    </script>
+
+</body>
+</html>
