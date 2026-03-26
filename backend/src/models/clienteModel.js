@@ -1,49 +1,33 @@
-const db = require('../config/database');
+const { pool } = require('../config/database');
 
-async function listarClientes() {
-  const [rows] = await db.query('SELECT * FROM clientes ORDER BY id DESC');
+async function listar() {
+  const [rows] = await pool.query('SELECT * FROM clientes ORDER BY id DESC');
   return rows;
 }
 
-async function buscarClientePorId(id) {
-  const [rows] = await db.query('SELECT * FROM clientes WHERE id = ?', [id]);
-  return rows[0];
+async function buscarPorId(id) {
+  const [rows] = await pool.query('SELECT * FROM clientes WHERE id = ?', [id]);
+  return rows[0] || null;
 }
 
-async function criarCliente(cliente) {
-  const { nome, cpf_cnpj, email, telefone, endereco } = cliente;
-
-  const [result] = await db.query(
-    `INSERT INTO clientes (nome, cpf_cnpj, email, telefone, endereco)
-     VALUES (?, ?, ?, ?, ?)`,
-    [nome, cpf_cnpj, email, telefone, endereco]
+async function criar(dados) {
+  const { nome_cliente, cpf_cnpj, telefone_cliente, email_cliente, endereco_cliente, obs_cliente } = dados;
+  const [result] = await pool.query(
+    `INSERT INTO clientes (nome_cliente, cpf_cnpj, telefone_cliente, email_cliente, endereco_cliente, obs_cliente)
+     VALUES (?, ?, ?, ?, ?, ?)`,
+    [nome_cliente, cpf_cnpj, telefone_cliente || null, email_cliente || null, endereco_cliente || null, obs_cliente || null]
   );
-
-  return result;
+  return result.insertId;
 }
 
-async function atualizarCliente(id, cliente) {
-  const { nome, cpf_cnpj, email, telefone, endereco } = cliente;
-
-  const [result] = await db.query(
+async function atualizar(id, dados) {
+  const { nome_cliente, cpf_cnpj, telefone_cliente, email_cliente, endereco_cliente, obs_cliente } = dados;
+  await pool.query(
     `UPDATE clientes
-     SET nome = ?, cpf_cnpj = ?, email = ?, telefone = ?, endereco = ?
-     WHERE id = ?`,
-    [nome, cpf_cnpj, email, telefone, endereco, id]
+        SET nome_cliente = ?, cpf_cnpj = ?, telefone_cliente = ?, email_cliente = ?, endereco_cliente = ?, obs_cliente = ?
+      WHERE id = ?`,
+    [nome_cliente, cpf_cnpj, telefone_cliente || null, email_cliente || null, endereco_cliente || null, obs_cliente || null, id]
   );
-
-  return result;
 }
 
-async function deletarCliente(id) {
-  const [result] = await db.query('DELETE FROM clientes WHERE id = ?', [id]);
-  return result;
-}
-
-module.exports = {
-  listarClientes,
-  buscarClientePorId,
-  criarCliente,
-  atualizarCliente,
-  deletarCliente
-};
+module.exports = { listar, buscarPorId, criar, atualizar };

@@ -1,54 +1,59 @@
-const clienteService = require('../services/clienteService');
+const model = require('../models/clienteModel');
+
+function isDuplicateError(error) {
+  return error && (error.code === 'ER_DUP_ENTRY' || String(error.message || '').includes('Duplicate'));
+}
 
 async function listar(req, res) {
   try {
-    const clientes = await clienteService.listar();
-    res.json(clientes);
+    const rows = await model.listar();
+    res.json(rows);
   } catch (error) {
-    res.status(500).json({ erro: error.message });
+    res.status(500).json({ erro: 'Falha ao listar clientes.', detalhe: error.message });
   }
 }
 
 async function buscarPorId(req, res) {
   try {
-    const cliente = await clienteService.buscarPorId(req.params.id);
-    res.json(cliente);
+    const row = await model.buscarPorId(req.params.id);
+    if (!row) return res.status(404).json({ erro: 'Cliente não encontrado.' });
+    res.json(row);
   } catch (error) {
-    res.status(404).json({ erro: error.message });
+    res.status(500).json({ erro: 'Falha ao buscar cliente.', detalhe: error.message });
   }
 }
 
 async function criar(req, res) {
   try {
-    const novoCliente = await clienteService.criar(req.body);
-    res.status(201).json(novoCliente);
+    if (!req.body.nome_cliente || !req.body.cpf_cnpj) {
+      return res.status(400).json({ erro: 'Nome e CPF/CNPJ são obrigatórios.' });
+    }
+    const id = await model.criar(req.body);
+    const cliente = await model.buscarPorId(id);
+    res.status(201).json(cliente);
   } catch (error) {
-    res.status(400).json({ erro: error.message });
+    const status = isDuplicateError(error) ? 409 : 500;
+    const detalhe = isDuplicateError(error)
+      ? 'Já existe cliente cadastrado com este CPF/CNPJ.'
+      : error.message;
+    res.status(status).json({ erro: 'Falha ao criar cliente.', detalhe });
   }
 }
 
 async function atualizar(req, res) {
   try {
-    const clienteAtualizado = await clienteService.atualizar(req.params.id, req.body);
-    res.json(clienteAtualizado);
+    const atual = await model.buscarPorId(req.params.id);
+    if (!atual) return res.status(404).json({ erro: 'Cliente não encontrado.' });
+    await model.atualizar(req.params.id, req.body);
+    const cliente = await model.buscarPorId(req.params.id);
+    res.json(cliente);
   } catch (error) {
-    res.status(400).json({ erro: error.message });
+    const status = isDuplicateError(error) ? 409 : 500;
+    const detalhe = isDuplicateError(error)
+      ? 'Já existe outro cliente cadastrado com este CPF/CNPJ.'
+      : error.message;
+    res.status(status).json({ erro: 'Falha ao atualizar cliente.', detalhe });
   }
 }
 
-async function remover(req, res) {
-  try {
-    const resultado = await clienteService.remover(req.params.id);
-    res.json(resultado);
-  } catch (error) {
-    res.status(404).json({ erro: error.message });
-  }
-}
-
-module.exports = {
-  listar,
-  buscarPorId,
-  criar,
-  atualizar,
-  remover
-};
+module.exports = { listar, buscarPorId, criar, atualizar };
