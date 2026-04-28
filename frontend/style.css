@@ -878,6 +878,24 @@ a:hover {
     gap: 12px;
 }
 
+/* Estados de carregamento, vazio e erro do grid de clientes */
+.clientes-grid__loading,
+.clientes-grid__vazio,
+.clientes-grid__erro {
+    background-color: var(--cor-branco);
+    border-radius: 14px;
+    padding: 40px 24px;
+    text-align: center;
+    color: var(--cor-texto-secundario);
+    font-size: 14px;
+    box-shadow: var(--sombra-sm);
+}
+
+.clientes-grid__erro {
+    color: var(--cor-perigo);
+    background-color: var(--cor-perigo-fundo);
+}
+
 /* Card individual de cliente */
 .cliente-card {
     display: flex;
