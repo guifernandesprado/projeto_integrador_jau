@@ -91,20 +91,7 @@
                     <p class="descricao-pagina">Preencha os dados do cliente para cadastrá-lo no sistema</p>
                 </div>
 
-                <!-- 
-                    FORMULÁRIO DE CADASTRO DE CLIENTE
-                    method="POST" → envia dados de forma segura
-                    action="#" → SUBSTITUIR pela rota do backend (ex: /api/clientes)
-                    
-                    Campos disponíveis para o backend:
-                    - nome_cliente (text, obrigatório)
-                    - cpf_cnpj (text, obrigatório)
-                    - telefone_cliente (tel, obrigatório - usado para WhatsApp)
-                    - email_cliente (email, opcional)
-                    - endereco_cliente (text, opcional)
-                    - obs_cliente (textarea, opcional)
-                -->
-                <form class="form-container" method="POST" action="#">
+                <form class="form-container">
 
                     <!-- Linha 1: Nome e CPF/CNPJ -->
                     <div class="form-row">
@@ -191,12 +178,7 @@
                     <!-- Botões de ação -->
                     <div class="form-acoes">
                         <a href="clientes.html" class="btn-secundario">Cancelar</a>
-                        <!-- 
-                            BACKEND: Ao clicar em "Salvar Cliente", o formulário
-                            deve ser submetido via POST para /api/clientes.
-                            No protótipo, apenas redirecionamos.
-                        -->
-                        <button type="button" class="btn-primario" onclick="salvarCliente()">
+                        <button type="submit" class="btn-primario">
                             Salvar Cliente
                         </button>
                     </div>
@@ -215,26 +197,6 @@
     <script>
         function toggleMenu() { document.getElementById('sidebar').classList.toggle('sidebar--aberta'); document.getElementById('overlay').classList.toggle('overlay--visivel'); }
         function fecharMenu() { document.getElementById('sidebar').classList.remove('sidebar--aberta'); document.getElementById('overlay').classList.remove('overlay--visivel'); }
-
-        /**
-         * Simula o salvamento do cliente.
-         * BACKEND: Substituir por envio real do formulário
-         * via fetch() ou submit do form para a rota POST /api/clientes.
-         */
-        function salvarCliente() {
-            // Validação básica
-            var nome = document.getElementById('nome_cliente').value;
-            var cpf = document.getElementById('cpf_cnpj').value;
-            var tel = document.getElementById('telefone_cliente').value;
-
-            if (!nome || !cpf || !tel) {
-                alert('Por favor, preencha os campos obrigatórios (*).');
-                return;
-            }
-
-            alert('Cliente cadastrado com sucesso!');
-            window.location.href = 'clientes.html';
-        }
     </script>
 
     <script src="js/api.js"></script>

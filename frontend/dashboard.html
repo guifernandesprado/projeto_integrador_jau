@@ -177,8 +177,7 @@
                                 </svg>
                             </div>
                         </div>
-                        <!-- BACKEND: Substituir pelo total real de clientes -->
-                        <p class="card-metrica__valor">5</p>
+                        <p class="card-metrica__valor" id="total-clientes">--</p>
                         <p class="card-metrica__sub">clientes cadastrados</p>
                     </div>
 
@@ -192,9 +191,8 @@
                                 </svg>
                             </div>
                         </div>
-                        <!-- BACKEND: Substituir pela soma dos débitos com status "pendente" -->
-                        <p class="card-metrica__valor">R$ 1.080,50</p>
-                        <p class="card-metrica__sub">4 débitos pendentes</p>
+                        <p class="card-metrica__valor" id="valor-pendente">R$ 0,00</p>
+                        <p class="card-metrica__sub"><span id="total-pendentes">0</span> débitos pendentes</p>
                     </div>
 
                     <!-- Card: Valores Vencidos -->
@@ -208,9 +206,8 @@
                                 </svg>
                             </div>
                         </div>
-                        <!-- BACKEND: Substituir pela soma dos débitos com status "vencido" -->
-                        <p class="card-metrica__valor">R$ 770,00</p>
-                        <p class="card-metrica__sub">2 débitos vencidos</p>
+                        <p class="card-metrica__valor" id="valor-atrasado">R$ 0,00</p>
+                        <p class="card-metrica__sub"><span id="total-atrasados">0</span> débitos vencidos</p>
                     </div>
 
                     <!-- Card: Total Recebido -->
@@ -223,8 +220,7 @@
                                 </svg>
                             </div>
                         </div>
-                        <!-- BACKEND: Substituir pela soma dos débitos com status "pago" -->
-                        <p class="card-metrica__valor">R$ 1.350,00</p>
+                        <p class="card-metrica__valor" id="valor-pago">R$ 0,00</p>
                         <p class="card-metrica__sub">valores recebidos</p>
                     </div>
 
@@ -259,57 +255,8 @@
                                 <th>Ação</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <!-- 
-                                BACKEND: Cada <tr> deve ser gerado dinamicamente
-                                com os dados do banco de dados.
-                                
-                                O link do WhatsApp segue o formato:
-                                https://wa.me/55{DDD}{NUMERO}?text={MENSAGEM_CODIFICADA}
-                            -->
-                            <tr>
-                                <td>Maria Silva</td>
-                                <td>Compra de arroz e feijão</td>
-                                <td class="tabela__valor tabela__valor--perigo">R$ 350,00</td>
-                                <td>15/03/2026</td>
-                                <td>
-                                    <!-- 
-                                        BOTÃO COBRAR VIA WHATSAPP
-                                        O href monta a URL do WhatsApp Web com:
-                                        - Telefone do cliente (com DDI 55 + DDD)
-                                        - Mensagem pré-preenchida com dados do débito
-                                    -->
-                                    <a href="https://wa.me/5500000000001?text=Ol%C3%A1%20Maria%20Silva!%20%F0%9F%98%8A%0A%0APassando%20para%20lembrar%20sobre%20o%20d%C3%A9bito%20referente%20a%3A%20Compra%20de%20arroz%20e%20feij%C3%A3o%0AValor%3A%20R%24%20350%2C00%0AVencimento%3A%2015%2F03%2F2026%0A%0APor%20favor%2C%20entre%20em%20contato%20para%20regulariza%C3%A7%C3%A3o.%0AObrigado!%20%E2%80%94%20JPisa%20Distribuidora" 
-                                       target="_blank" 
-                                       class="btn-whatsapp"
-                                       rel="noopener noreferrer"
-                                    >
-                                        <!-- Ícone do WhatsApp -->
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="#fff">
-                                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-                                        </svg>
-                                        Cobrar
-                                    </a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Ana Costa</td>
-                                <td>Compra de farinha e macarrão</td>
-                                <td class="tabela__valor tabela__valor--perigo">R$ 420,00</td>
-                                <td>10/03/2026</td>
-                                <td>
-                                    <a href="https://wa.me/5500000000003?text=Ol%C3%A1%20Ana%20Costa!%20%F0%9F%98%8A%0A%0APassando%20para%20lembrar%20sobre%20o%20d%C3%A9bito%20referente%20a%3A%20Compra%20de%20farinha%20e%20macarr%C3%A3o%0AValor%3A%20R%24%20420%2C00%0AVencimento%3A%2010%2F03%2F2026%0A%0APor%20favor%2C%20entre%20em%20contato%20para%20regulariza%C3%A7%C3%A3o.%0AObrigado!%20%E2%80%94%20JPisa%20Distribuidora" 
-                                       target="_blank" 
-                                       class="btn-whatsapp"
-                                       rel="noopener noreferrer"
-                                    >
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="#fff">
-                                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-                                        </svg>
-                                        Cobrar
-                                    </a>
-                                </td>
-                            </tr>
+                        <tbody id="dashboard-vencidos-tbody">
+                            <tr><td colspan="5" class="tabela__vazio">Carregando dados...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -340,36 +287,8 @@
                                 <th>Status</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <!-- BACKEND: Gerar linhas dinamicamente -->
-                            <tr>
-                                <td>João Oliveira</td>
-                                <td>Compra de óleo e açúcar</td>
-                                <td class="tabela__valor tabela__valor--normal">R$ 180,50</td>
-                                <td>25/03/2026</td>
-                                <td><span class="badge badge--pendente">Pendente</span></td>
-                            </tr>
-                            <tr>
-                                <td>Fernanda Lima</td>
-                                <td>Compra de biscoitos e doces</td>
-                                <td class="tabela__valor tabela__valor--normal">R$ 275,00</td>
-                                <td>28/03/2026</td>
-                                <td><span class="badge badge--pendente">Pendente</span></td>
-                            </tr>
-                            <tr>
-                                <td>Maria Silva</td>
-                                <td>Compra de café e leite</td>
-                                <td class="tabela__valor tabela__valor--normal">R$ 95,00</td>
-                                <td>01/04/2026</td>
-                                <td><span class="badge badge--pendente">Pendente</span></td>
-                            </tr>
-                            <tr>
-                                <td>Ana Costa</td>
-                                <td>Compra de grãos</td>
-                                <td class="tabela__valor tabela__valor--normal">R$ 530,00</td>
-                                <td>05/04/2026</td>
-                                <td><span class="badge badge--pendente">Pendente</span></td>
-                            </tr>
+                        <tbody id="dashboard-proximos-tbody">
+                            <tr><td colspan="5" class="tabela__vazio">Carregando dados...</td></tr>
                         </tbody>
                     </table>
                 </div>
