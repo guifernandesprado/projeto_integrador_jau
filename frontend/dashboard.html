@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <!-- ============================================================
+    CobreJá - Sistema Web para Gerenciamento de Cobranças
+    
+    ARQUIVO: dashboard.html
+    DESCRIÇÃO: Painel principal do sistema. Exibe métricas
+    resumidas (total de clientes, valores pendentes, vencidos
+    e recebidos), além de tabelas com cobranças urgentes
+    e próximos vencimentos.
+    
+    INTEGRAÇÃO COM BACKEND:
+    - Os valores dos cards devem ser populados via backend
+      (ex: GET /api/dashboard/metricas)
+    - As tabelas devem listar dados do banco de dados
+      (ex: GET /api/debitos?status=vencido)
+    - Os links de WhatsApp são gerados dinamicamente com
+      os dados do cliente e do débito.
+    ============================================================ -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CobreJá — Dashboard</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- CSS Principal -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="app-container">
+
+        <!-- ============================================================
+        SIDEBAR - Menu Lateral de Navegação
+        Presente em todas as páginas internas. Contém o logo,
+        links para cada seção e botão de sair.
+        ============================================================ -->
+        <aside class="sidebar" id="sidebar">
+            
+            <!-- Logo do sistema -->
+            <div class="sidebar__logo">
+                <div class="sidebar__logo-icone">
+                    <img src="icone.webp" alt="CobreJá">
+                </div>
+                <div>
+                    <h2 class="sidebar__titulo">CobreJá</h2>
+                    <p class="sidebar__subtitulo">Gestão de Cobranças</p>
+                </div>
+            </div>
+
+            <div class="sidebar__divisor"></div>
+
+            <!-- Links de navegação -->
+            <nav class="sidebar__nav">
+
+                <!-- Dashboard (ATIVO nesta página) -->
+                <a href="dashboard.html" class="sidebar__nav-item sidebar__nav-item--ativo">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+                        <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+                    </svg>
+                    <span>Dashboard</span>
+                </a>
+
+                <!-- Clientes -->
+                <a href="clientes.html" class="sidebar__nav-item">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                    <span>Clientes</span>
+                </a>
+
+                <!-- Novo Cliente -->
+                <a href="cadastro-cliente.html" class="sidebar__nav-item">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                        <circle cx="8.5" cy="7" r="4"/>
+                        <line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/>
+                    </svg>
+                    <span>Novo Cliente</span>
+                </a>
+
+                <!-- Novo Débito -->
+                <a href="registro-debito.html" class="sidebar__nav-item">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                        <line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/>
+                    </svg>
+                    <span>Novo Débito</span>
+                </a>
+
+                <!-- Contas a Receber -->
+                <a href="contas-receber.html" class="sidebar__nav-item">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="1" x2="12" y2="23"/>
+                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                    </svg>
+                    <span>Contas a Receber</span>
+                </a>
+
+            </nav>
+
+            <!-- Espaçador (empurra o botão sair para baixo) -->
+            <div class="sidebar__espacador"></div>
+
+            <div class="sidebar__divisor"></div>
+
+            <!-- Botão de sair -->
+            <a href="index.html" class="sidebar__sair">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                    <polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+                </svg>
+                <span>Sair do Sistema</span>
+            </a>
+
+        </aside>
+
+        <!-- Overlay para fechar a sidebar em mobile -->
+        <div class="overlay" id="overlay" onclick="fecharMenu()"></div>
+
+        <!-- ============================================================
+        CONTEÚDO PRINCIPAL
+        ============================================================ -->
+        <main class="conteudo-principal">
+
+            <!-- Header superior -->
+            <header class="header">
+                <!-- Botão hambúrguer (visível apenas em mobile) -->
+                <button class="header__menu-btn" onclick="toggleMenu()" aria-label="Abrir menu">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="6" x2="21" y2="6"/>
+                        <line x1="3" y1="12" x2="21" y2="12"/>
+                        <line x1="3" y1="18" x2="21" y2="18"/>
+                    </svg>
+                </button>
+                <div class="header__info">
+                    <p class="header__bemvindo">Bem-vindo(a) de volta</p>
+                    <h3 class="header__nome">JPisa Distribuidora</h3>
+                </div>
+                <div class="header__avatar">JP</div>
+            </header>
+
+            <!-- Área de conteúdo -->
+            <div class="conteudo-area">
+
+                <!-- Título da página -->
+                <div class="pagina-titulo-area">
+                    <h1 class="titulo-pagina">Dashboard</h1>
+                    <p class="descricao-pagina">Visão geral das cobranças e contas a receber</p>
+                </div>
+
+                <!-- ============================================================
+                CARDS DE MÉTRICAS
+                Em produção, os valores serão populados pelo backend.
+                Exemplo de endpoint: GET /api/dashboard/metricas
+                Resposta esperada: { totalClientes, totalPendente, totalVencido, totalPago }
+                ============================================================ -->
+                <div class="cards-grid">
+
+                    <!-- Card: Total de Clientes -->
+                    <div class="card-metrica card-metrica--clientes">
+                        <div class="card-metrica__header">
+                            <span class="card-metrica__label">Total de Clientes</span>
+                            <div class="card-metrica__icone-box card-metrica__icone-box--teal">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0d9488" stroke-width="2">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                    <circle cx="9" cy="7" r="4"/>
+                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <p class="card-metrica__valor" id="total-clientes">--</p>
+                        <p class="card-metrica__sub">clientes cadastrados</p>
+                    </div>
+
+                    <!-- Card: Valores Pendentes -->
+                    <div class="card-metrica card-metrica--pendente">
+                        <div class="card-metrica__header">
+                            <span class="card-metrica__label">Valores Pendentes</span>
+                            <div class="card-metrica__icone-box card-metrica__icone-box--amarelo">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <p class="card-metrica__valor" id="valor-pendente">R$ 0,00</p>
+                        <p class="card-metrica__sub"><span id="total-pendentes">0</span> débitos pendentes</p>
+                    </div>
+
+                    <!-- Card: Valores Vencidos -->
+                    <div class="card-metrica card-metrica--vencido">
+                        <div class="card-metrica__header">
+                            <span class="card-metrica__label">Valores Vencidos</span>
+                            <div class="card-metrica__icone-box card-metrica__icone-box--vermelho">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2">
+                                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                                    <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <p class="card-metrica__valor" id="valor-atrasado">R$ 0,00</p>
+                        <p class="card-metrica__sub"><span id="total-atrasados">0</span> débitos vencidos</p>
+                    </div>
+
+                    <!-- Card: Total Recebido -->
+                    <div class="card-metrica card-metrica--pago">
+                        <div class="card-metrica__header">
+                            <span class="card-metrica__label">Total Recebido</span>
+                            <div class="card-metrica__icone-box card-metrica__icone-box--verde">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2">
+                                    <polyline points="20 6 9 17 4 12"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <p class="card-metrica__valor" id="valor-pago">R$ 0,00</p>
+                        <p class="card-metrica__sub">valores recebidos</p>
+                    </div>
+
+                </div>
+
+                <!-- ============================================================
+                SEÇÃO: COBRANÇAS VENCIDAS
+                Lista os débitos que já passaram da data de vencimento.
+                O botão "Cobrar" redireciona ao WhatsApp Web com 
+                mensagem pré-preenchida.
+                
+                BACKEND: GET /api/debitos?status=vencido
+                ============================================================ -->
+                <div class="pagina-titulo-area">
+                    <h2 class="titulo-secao">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                            <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+                        </svg>
+                        Cobranças Vencidas — Atenção Necessária
+                    </h2>
+                </div>
+
+                <div class="tabela-container">
+                    <table class="tabela">
+                        <thead>
+                            <tr>
+                                <th>Cliente</th>
+                                <th>Descrição</th>
+                                <th>Valor</th>
+                                <th>Vencimento</th>
+                                <th>Ação</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dashboard-vencidos-tbody">
+                            <tr><td colspan="5" class="tabela__vazio">Carregando dados...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- ============================================================
+                SEÇÃO: PRÓXIMOS VENCIMENTOS
+                Lista os débitos pendentes ordenados por data de vencimento.
+                
+                BACKEND: GET /api/debitos?status=pendente&orderBy=dataVencimento
+                ============================================================ -->
+                <div class="pagina-titulo-area" style="margin-top: 36px;">
+                    <h2 class="titulo-secao">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                        </svg>
+                        Próximos Vencimentos
+                    </h2>
+                </div>
+
+                <div class="tabela-container">
+                    <table class="tabela">
+                        <thead>
+                            <tr>
+                                <th>Cliente</th>
+                                <th>Descrição</th>
+                                <th>Valor</th>
+                                <th>Vencimento</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dashboard-proximos-tbody">
+                            <tr><td colspan="5" class="tabela__vazio">Carregando dados...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+
+            <!-- Rodapé -->
+            <footer class="rodape">
+                <p>CobreJá © 2026 — Projeto Integrador 1 — Univesp — Polo Jaú</p>
+            </footer>
+
+        </main>
+
+    </div>
+
+    <!-- ============================================================
+    JAVASCRIPT - Menu responsivo
+    Controla a abertura/fechamento do menu lateral em dispositivos
+    móveis. Em produção, este script pode ser movido para um
+    arquivo .js separado.
+    ============================================================ -->
+    <script>
+        /**
+         * Abre ou fecha o menu lateral (sidebar).
+         * Utilizado em telas menores (mobile/tablet).
+         */
+        function toggleMenu() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            sidebar.classList.toggle('sidebar--aberta');
+            overlay.classList.toggle('overlay--visivel');
+        }
+
+        /**
+         * Fecha o menu lateral.
+         * Chamado ao clicar no overlay escuro.
+         */
+        function fecharMenu() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            sidebar.classList.remove('sidebar--aberta');
+            overlay.classList.remove('overlay--visivel');
+        }
+    </script>
+
+    <script src="js/api.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>

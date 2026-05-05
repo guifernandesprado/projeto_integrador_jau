@@ -1,0 +1,21 @@
+# Ambiente virtual Python
+venv/
+env/
+
+# Dependências Node.js
+node_modules/
+
+# Variáveis de ambiente
+.env
+.env.local
+
+# Arquivos do sistema operacional
+.DS_Store
+Thumbs.db
+
+# Cache do Python
+__pycache__/
+*.pyc
+
+# Arquivos do VSCode
+.vscode/
