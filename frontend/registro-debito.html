@@ -89,21 +89,12 @@
                     <p class="descricao-pagina">Vincule um débito a um cliente cadastrado</p>
                 </div>
 
-                <!-- 
-                    FORMULÁRIO DE REGISTRO DE DÉBITO
-                    action="#" → SUBSTITUIR por /api/debitos
-                -->
-                <form class="form-container" method="POST" action="#">
+                <form class="form-container">
 
                     <!-- Linha 1: Cliente e Valor -->
                     <div class="form-row">
                         <div class="form-field">
                             <label class="form-label" for="cliente_debito">Cliente *</label>
-                            <!-- 
-                                SELECT: Lista de clientes cadastrados.
-                                BACKEND: Deve ser populado dinamicamente via
-                                GET /api/clientes retornando id e nome.
-                            -->
                             <select 
                                 id="cliente_debito" 
                                 name="cliente_debito"
@@ -169,7 +160,7 @@
                     <!-- Botões -->
                     <div class="form-acoes">
                         <a href="contas-receber.html" class="btn-secundario">Cancelar</a>
-                        <button type="button" class="btn-primario" onclick="salvarDebito()">
+                        <button type="submit" class="btn-primario">
                             Registrar Débito
                         </button>
                     </div>
@@ -191,26 +182,6 @@
 
         // Preenche a data de criação com a data atual automaticamente
         document.getElementById('criacao_debito').value = new Date().toISOString().split('T')[0];
-
-        /**
-         * Simula o salvamento do débito.
-         * BACKEND: Substituir por POST /api/debitos
-         * com os dados: { clienteId, valor, dataVencimento, dataCriacao, descricao }
-         */
-        function salvarDebito() {
-            var cliente = document.getElementById('cliente_debito').value;
-            var valor = document.getElementById('valor_debito').value;
-            var vencimento = document.getElementById('vencimento_debito').value;
-            var descricao = document.getElementById('descricao_debito').value;
-
-            if (!cliente || !valor || !vencimento || !descricao) {
-                alert('Por favor, preencha os campos obrigatórios (*).');
-                return;
-            }
-
-            alert('Débito registrado com sucesso!');
-            window.location.href = 'contas-receber.html';
-        }
     </script>
 
     <script src="js/api.js"></script>
