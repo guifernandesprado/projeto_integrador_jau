@@ -1,0 +1,22 @@
+{
+  "name": "projeto-integrador-backend",
+  "version": "1.0.0",
+  "description": "Backend Node.js + Express + MySQL para o Projeto Integrador",
+  "main": "server.js",
+  "scripts": {
+    "dev": "nodemon server.js",
+    "start": "node server.js"
+  },
+  "author": "Projeto Integrador - Univesp - Polo Jaú",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.2",
+    "mysql2": "^3.14.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}

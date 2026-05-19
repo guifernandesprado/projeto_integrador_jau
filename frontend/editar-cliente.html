@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <!-- ============================================================
+    CobreJá - ARQUIVO: editar-cliente.html
+    DESCRIÇÃO: Formulário para editar os dados de um cliente
+    já cadastrado no sistema. Os campos vêm pré-preenchidos
+    com as informações atuais do cliente.
+    
+    INTEGRAÇÃO COM BACKEND:
+    - Ao carregar a página, o backend deve preencher os campos
+      com os dados do cliente via GET /api/clientes/{id}
+    - Ao salvar, enviar via PUT /api/clientes/{id}
+    - Campos: nome_cliente, cpf_cnpj, telefone_cliente,
+      email_cliente, endereco_cliente, obs_cliente
+    - O ID do cliente pode ser passado via query string:
+      editar-cliente.html?id=1
+    ============================================================ -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CobreJá — Editar Cliente</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="app-container">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar__logo">
+                <div class="sidebar__logo-icone">
+                    <img src="icone.webp" alt="CobreJá">
+                </div>
+                <div>
+                    <h2 class="sidebar__titulo">CobreJá</h2>
+                    <p class="sidebar__subtitulo">Gestão de Cobranças</p>
+                </div>
+            </div>
+            <div class="sidebar__divisor"></div>
+            <nav class="sidebar__nav">
+                <a href="dashboard.html" class="sidebar__nav-item">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                    <span>Dashboard</span>
+                </a>
+                <!-- Clientes ativo pois estamos editando um cliente -->
+                <a href="clientes.html" class="sidebar__nav-item sidebar__nav-item--ativo">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    <span>Clientes</span>
+                </a>
+                <a href="cadastro-cliente.html" class="sidebar__nav-item">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+                    <span>Novo Cliente</span>
+                </a>
+                <a href="registro-debito.html" class="sidebar__nav-item">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+                    <span>Novo Débito</span>
+                </a>
+                <a href="contas-receber.html" class="sidebar__nav-item">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                    <span>Contas a Receber</span>
+                </a>
+            </nav>
+            <div class="sidebar__espacador"></div>
+            <div class="sidebar__divisor"></div>
+            <a href="index.html" class="sidebar__sair">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                <span>Sair do Sistema</span>
+            </a>
+        </aside>
+
+        <div class="overlay" id="overlay" onclick="fecharMenu()"></div>
+
+        <!-- CONTEÚDO PRINCIPAL -->
+        <main class="conteudo-principal">
+
+            <header class="header">
+                <button class="header__menu-btn" onclick="toggleMenu()" aria-label="Abrir menu">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                </button>
+                <div class="header__info">
+                    <p class="header__bemvindo">Bem-vindo(a) de volta</p>
+                    <h3 class="header__nome">JPisa Distribuidora</h3>
+                </div>
+                <div class="header__avatar">JP</div>
+            </header>
+
+            <div class="conteudo-area">
+
+                <!-- Título da página -->
+                <div class="pagina-titulo-area">
+                    <h1 class="titulo-pagina">Editar Cliente</h1>
+                    <p class="descricao-pagina">Atualize os dados do cliente selecionado</p>
+                </div>
+
+                <!-- 
+                    FORMULÁRIO DE EDIÇÃO DE CLIENTE
+                    
+                    BACKEND: Ao carregar esta página, o backend deve
+                    buscar os dados do cliente pelo ID (via query string)
+                    e preencher os campos value="" abaixo.
+                    
+                    Fluxo:
+                    1. Usuário clica em "Editar" no card do cliente
+                    2. Redireciona para editar-cliente.html?id=1
+                    3. Backend busca GET /api/clientes/1
+                    4. Preenche os campos com os dados retornados
+                    5. Ao salvar, envia PUT /api/clientes/1
+                -->
+                <form class="form-container" method="POST" action="#">
+                    
+                    <!-- 
+                        Campo oculto com o ID do cliente
+                        BACKEND: Usar para identificar qual cliente atualizar
+                    -->
+                    <input type="hidden" id="cliente_id" name="cliente_id" >
+
+                    <!-- Linha 1: Nome e CPF/CNPJ -->
+                    <div class="form-row">
+                        <div class="form-field">
+                            <label class="form-label" for="nome_cliente">Nome Completo *</label>
+                            <input 
+                                type="text" 
+                                id="nome_cliente" 
+                                name="nome_cliente"
+                                class="form-input"
+                                placeholder="Ex: Maria da Silva"
+                                required
+                                
+                            >
+                            <!-- BACKEND: value preenchido com dado do banco -->
+                        </div>
+                        <div class="form-field">
+                            <label class="form-label" for="cpf_cnpj">CPF ou CNPJ *</label>
+                            <input 
+                                type="text" 
+                                id="cpf_cnpj" 
+                                name="cpf_cnpj"
+                                class="form-input"
+                                placeholder="Ex: 000.000.000-01"
+                                required
+                            >
+                        </div>
+                    </div>
+
+                    <!-- Linha 2: Telefone e Email -->
+                    <div class="form-row">
+                        <div class="form-field">
+                            <label class="form-label" for="telefone_cliente">
+                                Telefone (WhatsApp) *
+                                <span class="form-label__dica">Usado para cobrança via WhatsApp</span>
+                            </label>
+                            <input 
+                                type="tel" 
+                                id="telefone_cliente" 
+                                name="telefone_cliente"
+                                class="form-input"
+                                placeholder="Ex: (00) 00000-0001"
+                                required
+                                
+                            >
+                        </div>
+                        <div class="form-field">
+                            <label class="form-label" for="email_cliente">E-mail</label>
+                            <input 
+                                type="email" 
+                                id="email_cliente" 
+                                name="email_cliente"
+                                class="form-input"
+                                placeholder="Ex: cliente@email.com"
+                                
+                            >
+                        </div>
+                    </div>
+
+                    <!-- Linha 3: Endereço completo -->
+                    <div class="form-row">
+                        <div class="form-field form-field--full">
+                            <label class="form-label" for="endereco_cliente">Endereço Completo</label>
+                            <input 
+                                type="text" 
+                                id="endereco_cliente" 
+                                name="endereco_cliente"
+                                class="form-input"
+                                placeholder="Ex: Rua das Flores, 123 - Centro - Jaú/SP"
+                                
+                            >
+                        </div>
+                    </div>
+
+                    <!-- Linha 4: Observações -->
+                    <div class="form-row">
+                        <div class="form-field form-field--full">
+                            <label class="form-label" for="obs_cliente">Observações</label>
+                            <textarea 
+                                id="obs_cliente" 
+                                name="obs_cliente"
+                                class="form-input form-textarea"
+                                placeholder="Informações adicionais sobre o cliente..."
+                                rows="3"
+                            >Cliente frequente. Compras semanais às segundas-feiras.</textarea>
+                            <!-- BACKEND: Conteúdo do textarea preenchido com dado do banco -->
+                        </div>
+                    </div>
+
+                    <!-- Botões de ação -->
+                    <div class="form-acoes">
+                        <a href="clientes.html" class="btn-secundario">Cancelar</a>
+                        <!-- 
+                            BACKEND: Ao clicar em "Salvar Alterações":
+                            - Coletar dados do formulário
+                            - Enviar PUT /api/clientes/{id} com os dados
+                            - Redirecionar para clientes.html após sucesso
+                        -->
+                        <button type="button" class="btn-primario" onclick="salvarEdicao()">
+                            Salvar Alterações
+                        </button>
+                    </div>
+
+                </form>
+
+            </div>
+
+            <footer class="rodape">
+                <p>CobreJá © 2026 — Projeto Integrador 1 — Univesp — Polo Jaú</p>
+            </footer>
+
+        </main>
+    </div>
+
+    <script>
+        function toggleMenu() { document.getElementById('sidebar').classList.toggle('sidebar--aberta'); document.getElementById('overlay').classList.toggle('overlay--visivel'); }
+        function fecharMenu() { document.getElementById('sidebar').classList.remove('sidebar--aberta'); document.getElementById('overlay').classList.remove('overlay--visivel'); }
+
+        /**
+         * Simula a atualização dos dados do cliente.
+         * 
+         * BACKEND: Substituir por envio real via fetch():
+         * 
+         * var clienteId = document.getElementById('cliente_id').value;
+         * 
+         * fetch('/api/clientes/' + clienteId, {
+         *     method: 'PUT',
+         *     headers: { 'Content-Type': 'application/json' },
+         *     body: JSON.stringify({
+         *         nome: document.getElementById('nome_cliente').value,
+         *         cpfCnpj: document.getElementById('cpf_cnpj').value,
+         *         telefone: document.getElementById('telefone_cliente').value,
+         *         email: document.getElementById('email_cliente').value,
+         *         endereco: document.getElementById('endereco_cliente').value,
+         *         observacoes: document.getElementById('obs_cliente').value
+         *     })
+         * })
+         * .then(response => response.json())
+         * .then(data => {
+         *     alert('Cliente atualizado com sucesso!');
+         *     window.location.href = 'clientes.html';
+         * });
+         */
+        function salvarEdicao() {
+            // Validação básica dos campos obrigatórios
+            var nome = document.getElementById('nome_cliente').value;
+            var cpf = document.getElementById('cpf_cnpj').value;
+            var tel = document.getElementById('telefone_cliente').value;
+
+            if (!nome || !cpf || !tel) {
+                alert('Por favor, preencha os campos obrigatórios (*).');
+                return;
+            }
+
+            // Simulação de sucesso (substituir pelo fetch acima em produção)
+            alert('Dados do cliente atualizados com sucesso!');
+            window.location.href = 'clientes.html';
+        }
+    </script>
+
+    <script src="js/api.js"></script>
+    <script src="js/editar-cliente.js"></script>
+</body>
+</html>
