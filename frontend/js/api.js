@@ -1,5 +1,4 @@
-window.API_BASE = 'http://localhost:3000/api';
-
+window.API_BASE = 'https://recebefacil-backend.onrender.com/api';
 async function apiGet(path) {
   const response = await fetch(`${window.API_BASE}${path}`);
   const data = await response.json();
